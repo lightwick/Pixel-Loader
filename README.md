@@ -3,6 +3,6 @@ Tool to load and pixelate unpixelated images
 
 Open pixeller.py as main
 
-dependencies:
-kivy
+## dependencies:
+kivy <br/>
 tkinter
