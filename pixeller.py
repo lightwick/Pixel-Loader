@@ -20,6 +20,7 @@ from kivy.uix.label import Label
 from imgLoad import Desktop_FileDialog, FileGroup
 
 from random import random
+from image_out import make
 
 texture_width, texture_height = 0, 0
 box_size_val = 20
@@ -216,6 +217,7 @@ class img(Image):
         # well shit, in the image the upper left is (0,0) and kivy objects, bottom left is (0,0) wtf
         _color = self._coreimage.read_pixel(debug_x+box_size_val/2, texture_height-(debug_y+box_size_val/2)-1)
         if ready:
+            ls=[]
             column_num = int((box2_x-box1_x)//box_size_val+1)
             row_num = int((box1_y-box2_y)//box_size_val+1)
             print(row_num, column_num)
@@ -226,9 +228,11 @@ class img(Image):
             for i in range(row_num):
                 for j in range(column_num):
                     _color = self._coreimage.read_pixel(box1_x+box_size_val/2+box_size_val*j, texture_height-(box1_y+box_size_val/2+1-box_size_val*i))
-                    print(_color)
+                    ls.append(_color)
             print("done")
             ready = False
+            make('RGB', column_num, row_num, ls)
+            
                     
         
 class box_size(Slider):
