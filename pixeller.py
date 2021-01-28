@@ -104,9 +104,9 @@ class box(Widget):
         # 4. deletes box when 'esc' key is pressed
         
         # due to bug, widget pos moves with box
-        global box1_x, box1_x, box2_x, box2_y
+        global box1_x, box1_y, box2_x, box2_y
 
-        global debug_x, debug_y
+        global debug_x, debug_y, ready
 
         self.canvas.remove(self.line)
         # needs configuratino with coordinates plus box_size_val
@@ -134,8 +134,9 @@ class box(Widget):
         if keycode[1] == 'enter':
             if self.box1_selected:
                 if self.box2_selected:
+                    print("ready set to true")
                     ready = True
-                    Popup(content=Label(text='all boxes are selected')).open
+                    # Popup(content=Label(text='all boxes are selected')).open()
                 else:
                     box2_x, box2_y = self.pos
                     self.box2_selected = True
@@ -159,6 +160,16 @@ class box(Widget):
                     self.box1_selected = False
                     self.canvas.remove(self.box1)
 
+        '''
+        if ready:
+            row_num = int((box2_x-box1_x)//box_size_val+1)
+            column_num = int((box2_y-box1_y)//box_size_val+1)
+            for i in range(row_num):
+                for j in range(column_num):
+                    self.x = box1_x+box_size_val/2+box_size_val*i
+                    self.y = box1_y+box_size_val/2+box_size_val*j
+        '''
+                    
     def reposition(self):
         window_width, window_height = Window.size
         global texture_width, texture_height, box_size_val
@@ -196,17 +207,28 @@ class img(Image):
         #self._keyboard = None
         
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers): # get the color of the changed
-        global box_size_val, _color
-        
+        global box_size_val, _color, ready
+
         global texture_height
         # Holy shit it works!!!!
         # The problem was, the bottom left start as (0,0) where I thought the upper left was (0,0)
         # well shit, in the image the upper left is (0,0) and kivy objects, bottom left is (0,0) wtf
         _color = self._coreimage.read_pixel(debug_x+box_size_val/2, texture_height-(debug_y+box_size_val/2)-1)
-        
         if ready:
-            pass
-        
+            column_num = int((box2_x-box1_x)//box_size_val+1)
+            row_num = int((box1_y-box2_y)//box_size_val+1)
+            print(row_num, column_num)
+            print(box1_y)
+
+            print(texture_height, box1_y)
+            
+            for i in range(row_num):
+                for j in range(column_num):
+                    _color = self._coreimage.read_pixel(box1_x+box_size_val/2+box_size_val*j, texture_height-(box1_y+box_size_val/2+1+box_size_val*i))
+                    print(_color)
+            print("done")
+            ready = False
+                    
         
 class box_size(Slider):
     def __init__(self, **kwargs):
