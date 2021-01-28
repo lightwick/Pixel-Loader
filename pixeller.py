@@ -74,6 +74,7 @@ class debug(Widget):
             self.rect = Rectangle(pos = (50,50), size=(100,100))
 
 # the box's bottom left is it's x,y value
+# self.x, self.y relative to window
 class box(Widget):
     def __init__(self, **kwargs):
         super(box, self).__init__(**kwargs)
@@ -138,13 +139,13 @@ class box(Widget):
                     ready = True
                     # Popup(content=Label(text='all boxes are selected')).open()
                 else:
-                    box2_x, box2_y = self.pos
+                    box2_x, box2_y = debug_x, debug_y
                     self.box2_selected = True
                     with self.canvas:
                         Color(random(),random(),random())
                         self.box2 = Line(rectangle=(self.x, self.y, box_size_val, box_size_val), width=2)
             else:
-                box1_x, box1_y = self.pos
+                box1_x, box1_y = debug_x, debug_y
                 self.box1_selected = True
                 with self.canvas:
                     Color(random(),random(),random())
@@ -178,7 +179,7 @@ class box(Widget):
         # wanted to set upper left as (0,0), but when the box is redrawn with a different size, the bottom left becomes the datum point, so it's really hard to get by
         debug_y = texture_height-1-box_size_val
         self.x = max(window_width/2-texture_width/2,0)
-        self.y = min(window_height/2+texture_height/2-box_size_val, window_height-box_size_val)
+        self.y = min(window_height/2+texture_height/2-box_size_val, window_height-box_size_val-1)
 
         self.canvas.remove(self.line)
         with self.canvas:
@@ -220,11 +221,11 @@ class img(Image):
             print(row_num, column_num)
             print(box1_y)
 
-            print(texture_height, box1_y)
+            print(texture_height)
             
             for i in range(row_num):
                 for j in range(column_num):
-                    _color = self._coreimage.read_pixel(box1_x+box_size_val/2+box_size_val*j, texture_height-(box1_y+box_size_val/2+1+box_size_val*i))
+                    _color = self._coreimage.read_pixel(box1_x+box_size_val/2+box_size_val*j, texture_height-(box1_y+box_size_val/2+1-box_size_val*i))
                     print(_color)
             print("done")
             ready = False
