@@ -15,6 +15,8 @@ from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.uix.slider import Slider
 from kivy.core.image import Image as CoreImage
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 from imgLoad import Desktop_FileDialog, FileGroup
 
 from random import random
@@ -27,6 +29,7 @@ box1_x, box1_y, box2_x, box2_y = 0, 0, 0, 0
 # debug_x & debug_y relative coordinates of image
 debug_x, debug_y = 0, 0
 _color = 0,0,0,0
+ready = False
 
 '''
 class getPixel(Widget):
@@ -130,20 +133,26 @@ class box(Widget):
 
         if keycode[1] == 'enter':
             if self.box1_selected:
-                box2_x, box2_y = self.pos
-                self.box2_selected = True
-                with self.canvas:
-                    Color(random(),random(),random())
-                    self.box2 = Line(rectangle=(self.x, self.y, box_size_val, box_size_val), width=2)
+                if self.box2_selected:
+                    ready = True
+                    Popup(content=Label(text='all boxes are selected')).open
+                else:
+                    box2_x, box2_y = self.pos
+                    self.box2_selected = True
+                    with self.canvas:
+                        Color(random(),random(),random())
+                        self.box2 = Line(rectangle=(self.x, self.y, box_size_val, box_size_val), width=2)
             else:
                 box1_x, box1_y = self.pos
                 self.box1_selected = True
                 with self.canvas:
                     Color(random(),random(),random())
                     self.box1 = Line(rectangle=(self.x, self.y, box_size_val, box_size_val), width=2)
+                    
         elif keycode[1] == 'escape':
             if self.box1_selected:
                 if self.box2_selected:
+                    ready = False
                     self.box2_selected = False
                     self.canvas.remove(self.box2)
                 else:
@@ -194,6 +203,9 @@ class img(Image):
         # The problem was, the bottom left start as (0,0) where I thought the upper left was (0,0)
         # well shit, in the image the upper left is (0,0) and kivy objects, bottom left is (0,0) wtf
         _color = self._coreimage.read_pixel(debug_x+box_size_val/2, texture_height-(debug_y+box_size_val/2)-1)
+        
+        if ready:
+            pass
         
         
 class box_size(Slider):
